@@ -16,7 +16,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
     operandButtons.forEach(btn => { 
         btn.addEventListener('click', event => {
             let value;
-            //console.log(displayValue);
 
             if (newNumber) {
                 displayValue = '0';
@@ -65,6 +64,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
     clearBtn = document.querySelector('.clear');
     clearBtn.addEventListener('click', clear);
 
+    // Sign button
+    signBtn = document.querySelector('.sign');
+    signBtn.addEventListener('click', sign);
+
+    // Percentage button
+    percentBtn = document.querySelector('.percent');
+    percentBtn.addEventListener('click', percent);
+
     // Equals button
     equalsBtn = document.querySelector('.equals');
     equalsBtn.addEventListener('click', equals);
@@ -72,6 +79,22 @@ window.addEventListener('DOMContentLoaded', (event) => {
     // Decimal button
     decimalBtn = document.querySelector('.decimal');
     decimalBtn.addEventListener('click', addDecimal);
+
+    
+    // Keybinds
+    const buttons = document.querySelectorAll('.operator, .operand, .decimal, .percent');
+    buttons.forEach(btn => {
+        const key = btn.innerText;
+        Mousetrap.bind(key, function() {
+            btn.click();
+        });
+        console.log(btn.innerText);
+    })
+
+    Mousetrap.bind(["del", "backspace"], backspace);
+    Mousetrap.bind(['enter', '='], equals);
+    Mousetrap.bind('esc', clear);
+    Mousetrap.bind('c', sign);
 });
 
 function calculateSolution() {
@@ -100,8 +123,20 @@ function clear() {
     updateDisplay('0');
 }
 
+function sign() {
+    const value = displayValue * -1;
+    updateDisplay(value);
+}
+
+function percent() {
+    const value = displayValue / 100;
+    updateDisplay(value);
+}
+
 function backspace() {
     let value = displayValue.slice(0, -1);
+    if (value === '') value = '0';
+    console.log('backspace was pressed');
     updateDisplay(value);
 }
 
@@ -112,6 +147,11 @@ function addDecimal() {
     }
 }
 
+function updateDisplay (value = '0') {
+    displayValue = value;
+    display = document.querySelector('#display');
+    display.innerText = value;
+}
 
 function add (a, b) {
     return a + b;
@@ -131,10 +171,4 @@ function divide (a, b) {
 
 function operate (operator, a, b) {
     return operator(a, b);
-}
-
-function updateDisplay (value = '0') {
-    displayValue = value;
-    display = document.querySelector('#display');
-    display.innerText = value;
 }
